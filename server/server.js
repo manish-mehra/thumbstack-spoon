@@ -63,6 +63,13 @@ io.on("connection", async function (socket) {
     io.emit('customer-bill', newCustomerBill, subTotal)
   })
 
+  socket.on('pay-tip', async (customerId, inputTip)=>{
+    const user = await User.findOne({customerId: customerId})
+    user.tip = inputTip
+    await user.save()
+    io.emit('tip-given', user)
+  })
+
 
   socket.on("disconnect", ()=>{
       console.log("disconnected")
