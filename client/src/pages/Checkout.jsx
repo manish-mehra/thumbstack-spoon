@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SocketContext } from '../context/socket' 
 import { useUserContext } from "../context/user"
+import { ENDPOINT } from "../constants";
 
 export default function Checkout() {
     const {user, setUser} = useUserContext()
@@ -23,11 +24,23 @@ export default function Checkout() {
 
     const payTipHandler = ()=>{
         socket.emit("pay-tip", user.customerId, inputTip)
-        socket.on('tip-given', (user)=> {
-            setUser(user)
-            console.log(user)
+        socket.on('tip-given', (newUser)=> {
+            setUser(()=>newUser)
         })
         setTipStatus('Your tip has been recieved. Thanks for your kindness!')
+    }
+
+    const handleGenerateSlip = async ()=>{
+        const response = await fetch(`${ENDPOINT}/invoice`, {
+            method: 'GET', // *GET, POST, PUT, DELETE, etc.
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            // body: JSON.stringify(user) // body data type must match "Content-Type" header
+          })
+          const data = await response.json()
+          console.log(data)
     }
 
   return (
@@ -80,6 +93,7 @@ export default function Checkout() {
             {tipStatus? <div>
                 <button 
                     className="mt-5 bg-red-200 hover:bg-red-500 hover:text-white red-green-500 text-center py-2 px-4 rounded"
+                    onClick={handleGenerateSlip}
                     >Generate Final Slip</button>
             </div>: null}            
         </div>

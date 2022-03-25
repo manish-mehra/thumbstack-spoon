@@ -4,13 +4,18 @@ const socket = require("socket.io");
 const index = require('./routes/index')
 const User = require('./models/User')
 const uniqid = require('uniqid')
+const cors = require('cors')
+const bodyParser = require('body-parser')
 // App setup
 const PORT = process.env.PORT || 4000;
 const app = express();
-app.use(index)
-
+app.use(cors())
+app.use(bodyParser.json())
+app.use(express.json())
 //database
 const connectDB = require('./db/connect')
+app.use(index) //routes
+
 
 const server = app.listen(PORT, function () {
     console.log(`Listening on port ${PORT}`)
@@ -35,7 +40,6 @@ io.on("connection", async function (socket) {
     let tip = 0
     let customerName = userNameInput
     const user = await User.create({customerName, tip, customerId, orders})   //create a user in mongodb
-    console.log(user)
     io.emit("get-user", user)
   })
   
