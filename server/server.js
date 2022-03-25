@@ -39,7 +39,7 @@ io.on("connection", async function (socket) {
     let customerId = uniqid()
     let tip = 0
     let customerName = userNameInput
-    const user = await User.create({customerName, tip, customerId, orders})   //create a user in mongodb
+    const user = await User.create({customerName, tip, customerId, orders, total: 0, subTotal: 0})   //create a user in mongodb
     io.emit("get-user", user)
   })
   
@@ -52,8 +52,8 @@ io.on("connection", async function (socket) {
     io.emit("order-placed", orders, user) // perform calculation
   })
 
-  socket.on('generate-customer-bill', (orders)=>{
-    const customerBill = orders.reduce((acc, curr) => {
+  socket.on('generate-customer-bill', async (user)=>{
+    const customerBill = user.orders.reduce((acc, curr) => {
       curr.qty = 1;
       const exists = acc.find(o => o.dishName === curr.dishName && o.price === curr.price);
       exists ? exists.qty++ : acc.push(({ dishName, price, qty } = curr));
@@ -64,6 +64,11 @@ io.on("connection", async function (socket) {
       acc += curr.price * curr.qty
       return acc
     }, 0)
+
+    const olduser = await User.findOne({customerId: user.customerId})
+    olduser.subTotal = subTotal
+    olduser.orders = newCustomerBill
+    await olduser.save()
     io.emit('customer-bill', newCustomerBill, subTotal)
   })
 

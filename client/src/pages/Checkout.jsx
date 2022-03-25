@@ -12,14 +12,14 @@ export default function Checkout() {
     const [customerBill, setCustomerBill] = useState([])
     const [subTotal, setSubTotal] = useState('')
     useEffect(()=>{
-        console.log(user)
-        socket.emit("generate-customer-bill", user.orders)
+        console.log("user",user)
+        socket.emit("generate-customer-bill", user)
         socket.on('customer-bill', (newCustomerBill, subTotal)=> {
             setCustomerBill(newCustomerBill)
             setSubTotal(subTotal)
         })
-        console.log(customerBill)
-        console.log(subTotal)
+        console.log("customer bill", customerBill)
+        console.log("subtotal",subTotal)
     }, [])
 
     const payTipHandler = ()=>{
@@ -30,49 +30,38 @@ export default function Checkout() {
         setTipStatus('Your tip has been recieved. Thanks for your kindness!')
     }
 
-    const handleGenerateSlip = async ()=>{
-        const response = await fetch(`${ENDPOINT}/invoice`, {
-            method: 'GET', // *GET, POST, PUT, DELETE, etc.
-            mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            // body: JSON.stringify(user) // body data type must match "Content-Type" header
-          })
-          const data = await response.json()
-          console.log(data)
-    }
+
 
   return (
     <div>
         <h1 className="mb-4 text-xl font-bold ">Checkout</h1>
         <ul className="flex-col gap-4 drop-shadow-md border max-w-xl">
         <li className="flex gap-10 justify-between bg-yellow-200 items-center ">
-                <p className=" mb-4 font-medium">{user.customerName.toUpperCase()}</p>
+                <p className=" mb-4 font-medium pl-2">{user.customerName.toUpperCase()}</p>
                 
-                <p className=" mb-4 font-medium">{user.customerId}</p>
+                <p className=" mb-4 font-medium pr-2">{user.customerId}</p>
             </li>
 
             <li className="flex gap-10">
-                <p className="w-28 mb-4 font-medium">DishName</p>
-                <p className="w-28 mb-4 font-medium">price(₹)</p>
-                <p className="w-28 mb-4 font-medium">Quantity</p>
-                <p className="w-28 mb-4 font-medium">total</p>
+                <p className="w-28 mb-4 pl-2 font-medium">DishName</p>
+                <p className="w-28 mb-4 pl-2 font-medium">price(₹)</p>
+                <p className="w-28 mb-4 pl-2 font-medium">Quantity</p>
+                <p className="w-28 mb-4 pl-2 font-medium">total</p>
             </li>
          {
             customerBill?.map((data)=> 
             <li key={data.dishName} className = "flex gap-10 border border-gray-200">
-                <p className="w-28 mb-4">{data.dishName}</p>
-                <p className="w-28 mb-4">{data.price}</p>
-                <p className="w-28 mb-4">{data.qty}</p>
-                <p className="w-28 mb-4">{data.total}</p>
+                <p className="w-28 mb-4 pl-2">{data.dishName}</p>
+                <p className="w-28 mb-4 pl-2">{data.price}</p>
+                <p className="w-28 mb-4 pl-2">{data.qty}</p>
+                <p className="w-28 mb-4 pl-2 ">{data.total}</p>
       
             </li>)
         } 
         </ul>
 
         <div>
-            <p className="font-semibold text-lg">Total:₹ {subTotal}</p>
+            <p className="font-semibold text-lg ">Total:₹ {subTotal}</p>
         </div>
         
         <div className="flex gap-3 mt-4">
@@ -90,11 +79,11 @@ export default function Checkout() {
         </div>
 
         <div>
-            {tipStatus? <div>
-                <button 
-                    className="mt-5 bg-red-200 hover:bg-red-500 hover:text-white red-green-500 text-center py-2 px-4 rounded"
-                    onClick={handleGenerateSlip}
-                    >Generate Final Slip</button>
+            {tipStatus? <div className="mt-6">
+                <a 
+                    href={`${ENDPOINT}/invoice/${user.customerId}`}
+                    className="bg-red-200 hover:bg-red-500 hover:text-white text-gray-700 text-center py-2 px-4 rounded"
+                    >Generate Final Slip</a>
             </div>: null}            
         </div>
 

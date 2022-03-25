@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom"
 import { SocketContext } from '../context/socket' 
 import { useUserContext } from "../context/user"
+import { isEmptyObject } from "../helpers";
 
 const orders= [
   {
@@ -64,15 +65,29 @@ export default function PlaceOrder() {
     useEffect(()=>{
         // return () => socket.disconnect(); //cleanup
     }, [])
+
+    useEffect(
+        () => {
+          let timer1 = setTimeout(() => setOrderStatus(''),  3000);
+          return () => {
+            clearTimeout(timer1);
+          };
+        },
+        [orderStatus]
+      );
     
     const placeOrderHandler = (e)=>{
         e.preventDefault()
-        setOrderStatus('placing order')
+        if(isEmptyObject(items)){
+            setOrderStatus('order something')
+            return
+        }
+        setOrderStatus('placing order 🍽️')
         socket.emit("placing-order", items, user.customerId)
         socket.on("order-placed", (orders, user)=>{
         setFinalOrderItems(orders)
         setUser(user) //updated user detail
-        setOrderStatus('order placed')
+        setOrderStatus('order placed 🍚🍜')
         })
     }
 
@@ -117,12 +132,12 @@ export default function PlaceOrder() {
                                 <span className="flex gap-2 items-center">
                                 <p>₹ {order.price}</p>
                                 <img 
-                                className="w-28"
+                                className="w-16"
                                 src={order.image} alt={order.dishName + "image"} />
                                 </span>
                             </span>
                             <button 
-                            className="bg-transparent border border-green-500 text-green-500 hover:bg-green-500 hover:text-white text-center py-2 px-4 rounded"
+                            className="bg-transparent border border-green-500 text-green-500 hover:bg-green-500 hover:text-white text-center py-1 px-2 rounded"
                             onClick = {()=>addItemHandler(order)}>Add Item</button>
                         </li>)
                         }
@@ -130,15 +145,17 @@ export default function PlaceOrder() {
                 </div>
 
                     
-                    <div className="absolute top-0 left-0 flex-col bg-gray-100 px-5 py-2 gap-6">
+                    <div className="flex items-center justify-between bg-gray-100 px-5 py-2 gap-6 mt-4">
                         
-                        <p className="text-lg font-semibold">Total Items: {items.length}</p>
-                        <p className="text-lg font-semibold">Total: {items.reduce(function (acc, obj){ return parseInt(acc) + parseInt(obj.price)}, 0)}</p>
-                        <button 
-                        className="bg-green-200 hover:bg-green-500 hover:text-white  text-center py-1 px-1 text-lg font-medium"
-                        onClick={placeOrderHandler}>Order Now!</button>
-                        <p>{orderStatus}</p>
-                        <div className="mt-4">
+                        <div className="flex items-center gap-4">
+                            <p className="text-lg font-semibold">Total Items: {items.length}</p>
+                            <p className="text-lg font-semibold">Total: {items.reduce(function (acc, obj){ return parseInt(acc) + parseInt(obj.price)}, 0)}</p>
+                            <button 
+                            className="bg-green-200 hover:bg-green-500 hover:text-white  text-center py-1 px-1 text-lg font-medium"
+                            onClick={placeOrderHandler}>Order Now!</button>
+                            <p>{orderStatus}</p>
+                        </div>
+                        <div className="mt-4 flex items-center">
                             <Link to="/checkout" className="bg-blue-200 hover:bg-blue-500 hover:text-white  text-center py-1 px-1 text-lg font-medium">Checkout</Link>
                         </div>
                         
@@ -147,7 +164,7 @@ export default function PlaceOrder() {
                     
             </div>
             :
-            <div>
+            <div className="flex justify-center">
                 <form onSubmit={newUserHandler}>
                     <p className="text-lg mb-3">Your name please!</p>
                     <input 
@@ -156,7 +173,7 @@ export default function PlaceOrder() {
                         setUserNameInput(e.target.value)
                     }/>
                     <input 
-                    className="bg-green-200 hover:bg-green-500 hover:text-white text-green-500 text-center py-1 px-1 text-sm"
+                    className="bg-green-200 hover:bg-green-500 hover:text-white text-green-500 text-center py-1 px-1 text-sm rounded ml-2"
                     type="submit" value="Check Menu" />
                 </form>
                 
