@@ -24,7 +24,7 @@ export default function Checkout() {
         socket.on('tip-given', (newUser)=> {
             setUser(()=>newUser)
         })
-        setTipStatus('Your tip has been recieved. Thanks for your kindness!')
+        setTipStatus('Your tip has been recieved. Thanks for coming!')
     }
 
 
@@ -57,8 +57,9 @@ export default function Checkout() {
         } 
         </ul>
 
-        <div>
+        <div className="mb-10">
             <p className="font-semibold text-lg ">Total:₹ {subTotal}</p>
+            <p className="text-xs text-red-500">Pay at the counter!</p>
         </div>
         
         <div className="flex gap-3 mt-4">
@@ -80,7 +81,7 @@ export default function Checkout() {
                 <a 
                     href={`${ENDPOINT}/invoice/${user.customerId}`}
                     className="bg-red-200 hover:bg-red-500 hover:text-white text-gray-700 text-center py-2 px-4 rounded"
-                    >Generate Final Slip</a>
+                    >Generate Restaurant Bill</a>
             </div>: null}            
         </div>
 

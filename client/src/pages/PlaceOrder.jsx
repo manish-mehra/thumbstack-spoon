@@ -148,15 +148,16 @@ export default function PlaceOrder() {
                     <div className="flex items-center justify-between bg-gray-100 px-5 py-2 gap-6 mt-4">
                         
                         <div className="flex items-center gap-4">
-                            <p className="text-lg font-semibold">Total Items: {items.length}</p>
-                            <p className="text-lg font-semibold">Total: {items.reduce(function (acc, obj){ return parseInt(acc) + parseInt(obj.price)}, 0)}</p>
+                            <p className="text-lg font-semibold">Total Items👜: {items.length}</p>
+                            <p className="text-lg font-semibold">Total ₹: {items.reduce(function (acc, obj){ return parseInt(acc) + parseInt(obj.price)}, 0)}</p>
                             <button 
                             className="bg-green-200 hover:bg-green-500 hover:text-white  text-center py-1 px-1 text-lg font-medium"
                             onClick={placeOrderHandler}>Order Now!</button>
                             <p>{orderStatus}</p>
                         </div>
                         <div className="mt-4 flex items-center">
-                            <Link to="/checkout" className="bg-blue-200 hover:bg-blue-500 hover:text-white  text-center py-1 px-1 text-lg font-medium">Checkout</Link>
+                            {!isEmptyObject(finalOrderItems)? <Link to="/checkout" className="bg-blue-200 hover:bg-blue-500 hover:text-white  text-center py-1 px-1 text-lg font-medium">Checkout</Link>
+                            :null}
                         </div>
                         
                         
@@ -164,9 +165,9 @@ export default function PlaceOrder() {
                     
             </div>
             :
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-10">
                 <form onSubmit={newUserHandler}>
-                    <p className="text-lg mb-3">Your name please!</p>
+                    <p className="text-lg mb-3">Your name please! 🙏</p>
                     <input 
                     className="px-1 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring"
                     type="text" name="userInput" value={userNameInput} onChange = {(e)=>
