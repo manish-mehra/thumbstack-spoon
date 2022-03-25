@@ -1,1 +1,1 @@
-export const ENDPOINT = "http://127.0.0.1:4001"
+export const ENDPOINT = "https://sheltered-harbor-39217.herokuapp.com"
