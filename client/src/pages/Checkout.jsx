@@ -12,14 +12,11 @@ export default function Checkout() {
     const [customerBill, setCustomerBill] = useState([])
     const [subTotal, setSubTotal] = useState('')
     useEffect(()=>{
-        console.log("user",user)
         socket.emit("generate-customer-bill", user)
         socket.on('customer-bill', (newCustomerBill, subTotal)=> {
             setCustomerBill(newCustomerBill)
             setSubTotal(subTotal)
         })
-        console.log("customer bill", customerBill)
-        console.log("subtotal",subTotal)
     }, [])
 
     const payTipHandler = ()=>{
